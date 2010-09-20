@@ -30,6 +30,26 @@ if script_path not in sys.path:
 
 from jythonconsole.console import Console
 
+from com.nomagic.magicdraw.core import Application
+
+class MDConsole(Console):
+    
+    # BANNER = Console.BANNER + ["MagicDraw OpenAPI Version %s" % Application.getInstance().openAPIVersion]
+    def __init__(self, namespace={}):
+        """
+            Create a MagicDraw Jython Console.
+            namespace is an optional and should be a dictionary or Map
+        """
+
+        # populate with the application and current project
+        namespace['app'] = Application.getInstance()
+        # TODO: probably need to listen for this changing, huh?
+        namespace['proj'] = namespace['app'].getProject()
+        # TODO: probably need to listen for this changing, huh?
+        namespace['model'] = namespace['proj'].getModel()
+
+        Console.__init__(self, namespace)
+
 class MDJythonFrame(JFrame):
     """ This is just like the default JythonFrame, but without the MagicDraw-killing feature
     """
@@ -37,9 +57,9 @@ class MDJythonFrame(JFrame):
         self.title = "MagicDraw Jython"
         self.size = (600, 400)
 
-def main(namespace=None):
+def main(namespace={}):
     frame = MDJythonFrame()
-    console = Console(namespace)
+    console = MDConsole(namespace)
     frame.getContentPane().add(JScrollPane(console.text_pane))
     frame.visible = True
 
