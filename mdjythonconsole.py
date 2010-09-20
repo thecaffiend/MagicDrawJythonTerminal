@@ -1,4 +1,5 @@
 import sys
+from javax.swing import JFrame, JScrollPane
 """
         much as i was looking forward to rewriting the whole terminal experience,
         somebody already did:
@@ -16,12 +17,32 @@ import sys
 # to the jython path when it means to add 
 #   $MD_HOME/plugins/com.nomagic.magicdraw.jpython/jython2.5.1/Lib
 # let us fix this.
-# TODO: automate finding this location
-sys.path.append("/opt/magicdraw/plugins/com.nomagic.magicdraw.jpython/jython2.5.1/Lib")
+real_jython_lib_path = sys.currentWorkingDir + "/plugins/com.nomagic.magicdraw.jpython/jython2.5.1/Lib"
+if real_jython_lib_path not in sys.path:
+        sys.path.append(sys.currentWorkingDir + "/plugins/com.nomagic.magicdraw.jpython/jython2.5.1/Lib")
 
-# also, the location of this script is not added. let us fix this as well.
-# TODO: automate finding this location
-sys.path.append("/home/gtpmasevm/MagicDrawJythonTerminal")
+# also, the location of this script is not added. let us fix this as well so we can import things
+# TODO: automate finding this location. 
+# PROBLEM: __file__ is not populated, and inspect is not available
+script_path = "/home/gtpmasevm/MagicDrawJythonTerminal"
+if script_path not in sys.path:
+    sys.path.append(script_path)
 
-from jythonconsole import console
-console.main()
+from jythonconsole.console import Console
+
+class MDJythonFrame(JFrame):
+    """ This is just like the default JythonFrame, but without the MagicDraw-killing feature
+    """
+    def __init__(self):
+        self.title = "MagicDraw Jython"
+        self.size = (600, 400)
+
+def main(namespace=None):
+    frame = MDJythonFrame()
+    console = Console(namespace)
+    frame.getContentPane().add(JScrollPane(console.text_pane))
+    frame.visible = True
+
+if __name__ == "__main__":
+    main()
+
