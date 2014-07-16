@@ -79,8 +79,8 @@ class MagicDrawJythonTerminal(JFrame):
     terminalOut = TerminalOutputStream(terminalArea)
     printStream = PrintStream(terminalOut, True)
 # use these if you want writer based output instead of the outputstream
-#    terminalOut = TerminalWriter(terminalArea)
-#    printWriter = PrintWriter(terminalOut, True)
+    terminalOut = TerminalWriter(terminalArea)
+    printWriter = PrintWriter(terminalOut, True)
     
     def __init__(self):
         JFrame.__init__(self, 'MagicDraw Jython Console')
@@ -113,17 +113,9 @@ class MagicDrawJythonTerminal(JFrame):
             s = 'in : ' + event.source.text
             self.printStream.println(s)
             
-            # try the embedded interp (the getLocals was just to see if I could interact with it)
-            # it's not returning anything
-            a = self.interpreter.getLocals()
-            self.printWriter.println(a)
-            self.interpreter.exec(event.source.txt)
-            
             # try the main interp (the getLocals was just to see if I could interact with it)
             # it's not returning anything
-            a = getLocals()
-            self.printWriter.println(a)
-            exec(event.source.txt)
+            # eval(event.source.txt)
             
             # set the input text blank and give it focus back. we don't get here if we try to use 
             # the interpreter, though we do when we don't try to interact with the interpreter 
